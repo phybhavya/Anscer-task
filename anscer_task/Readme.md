@@ -53,5 +53,5 @@ rosservice call /saveTrajectory "<filename: 'path/to/save/file.csv'> <duration: 
 Run the trajectory publisher node with the following command:
 
 ```bash
-rosrun anscer_task anscer_task_node_2<path/to/trajectory_file>
+rosrun anscer_task anscer_task_node_2 <path/to/trajectory_file>
 ```
