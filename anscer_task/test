@@ -1,0 +1,63 @@
+#include <ros/ros.h>
+#include <nav_msgs/Odometry.h>
+#include <visualization_msgs/MarkerArray.h>
+#include <geometry_msgs/Pose.h>
+
+void odomCallback(const nav_msgs::Odometry::ConstPtr& msg) {
+    // Extract the robot's pose from the Odometry message
+    geometry_msgs::Pose robotPose = msg->pose.pose;
+
+    // Interpolate between poses (you can use more sophisticated methods)
+    // For simplicity, let's assume linear interpolation
+    // You can store the interpolated poses in a list or use them directly
+
+    // TODO: Implement your interpolation logic here
+    // For example, you can save the poses to a file or visualize them.
+
+    // Print the robot's position (for demonstration purposes)
+    ROS_INFO("Robot position: x=%.2f, y=%.2f, z=%.2f",
+             robotPose.position.x, robotPose.position.y, robotPose.position.z);
+}
+
+int main(int argc, char** argv) {
+    ros::init(argc, argv, "trajectory_publisher");
+    ros::NodeHandle nh;
+
+    // Subscribe to the /odom topic
+    ros::Subscriber odomSub = nh.subscribe<nav_msgs::Odometry>("/odom", 10, odomCallback);
+
+    // Create a MarkerArray publisher
+    ros::Publisher markerPub = nh.advertise<visualization_msgs::MarkerArray>("trajectory_markers", 10);
+
+    // Create a Marker for the trajectory
+    visualization_msgs::Marker trajectoryMarker;
+    trajectoryMarker.header.frame_id = "world";  // Set the frame ID
+    trajectoryMarker.type = visualization_msgs::Marker::LINE_STRIP;
+    trajectoryMarker.action = visualization_msgs::Marker::ADD;
+    trajectoryMarker.scale.x = 0.05;  // Line width
+    trajectoryMarker.color.a = 1.0;
+    trajectoryMarker.color.r = 1.0;
+    trajectoryMarker.color.g = 0.0;
+    trajectoryMarker.color.b = 0.0;
+
+    // Collect your trajectory points (replace with actual data)
+    std::vector<geometry_msgs::Point> trajectoryPoints;
+    // Add points to the trajectoryPoints vector...
+
+    // Populate the marker with trajectory points
+    trajectoryMarker.points = trajectoryPoints;
+
+    // Create a MarkerArray and add the trajectoryMarker
+    visualization_msgs::MarkerArray markerArray;
+    markerArray.markers.push_back(trajectoryMarker);
+
+    // Publish the MarkerArray
+    while (ros::ok()) {
+        markerPub.publish(markerArray);
+        ros::spinOnce();
+        // Add a delay if needed
+        // ros::Duration(0.1).sleep();
+    }
+
+    return 0;
+}

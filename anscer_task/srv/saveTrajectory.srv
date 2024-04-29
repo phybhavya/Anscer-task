@@ -1,0 +1,6 @@
+# SaveTrajectory.srv
+string filename
+float32 duration
+---
+bool success
+string message
